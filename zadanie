@@ -1,0 +1,28 @@
+1) Stosując się do zasady enkapsulacji zdefiniuj klasę Budynek tak aby zawiera informacje o:
+- adresie (format tekstowy: ulica, numer, kod-pocztowy), kod pocztowy obsługuj bez myślnika.
+- metrażu (metry kwadratowe),
+- typie (mieszkalny/publiczny/komercyjny),
+- Miejscowości (inny typ złożony w programie dobierz tak typ pola, aby jej dane nie były powielane, w każdym
+Budynku).
+Samodzielnie dobierz typy danych. Miejscowość powinna być klasą zawierającą tylko nazwę ustawianą przy tworzeniu
+instancji.
+2) Wyposaż klasę Budynek, w licznik i budynków innych niż publiczne. Licznik ma rosnąć/maleć przy zmianach typu
+budynku i przy tworzeniu/usuwaniu instancji.
+3) Dla klasy Budynek zdefiniuj interfejs zawierający:
+- setery i getery wszystkich pól, przy czym dane adresowe pobieraj jako 3 oddzielne informacje i wstawiaj je do adresu
+zapisanego w instancji. Każdą ze składowych powinno dać się modyfikować oddzielnie (zauważ, że celowo są one
+separowane przecinkiem)
+- konstruktor argumentowy ustawiający wszystkie pola na zadane wartości.
+Samodzielnie zaproponuj ograniczenia dla wartości pól, tak aby nie dało się wprowadzić obiektu w nieprawidłowy stan.
+Także samodzielnie zaproponuj sposób kontroli ograniczeń i tam, gdzie to możliwe stosuj zasadę DRY.
+4) Dodaj klasę Posiadłość, która rozbuduje klasę Budynek o dodatkową działkę terenową wyrażoną w metrach
+kwadratowych. W nowej klasie pochodnej zdefiniuj interfejs. Pamiętaj o konstruktorze i zaproponowaniu ograniczeń
+dla nowego pola. Dodaj do obu klas funkcjonalność polimorficzną obliczającą podatek. Dla zwykłego Budynku podatek
+wynosi 10 PLN z m2
+, a dla Posiadłości dodatkowo dolicza się 5 PLN za m2
+, działki terenowej. Stosuj zasadę DRY.
+5) Napisz formalny mechanizm konwersji Budynek ➔ double, zwracający przekątną budynku przy założeniu, że ten ma
+kształt kwadratu.
+6) Zdefiniuj operator == dla Posiadłości, Przyjmij, że posiadłości są identyczne, jeśli są w tej samej Miejscowości. I mają
+ten sam metraż budynku i działki terenowej. Operator powinien zgłaszać wyjątek, jeśli dwie instancje są identyczne,
+ale mają inny typ.
