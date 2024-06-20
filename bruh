@@ -1,0 +1,121 @@
+#include <iostream>
+#include <string>
+#include <cmath>
+#include <stdexcept>
+
+using namespace std;
+
+class Miejscowosc {
+public:
+    Miejscowosc(const string& nazwa) : nazwa(nazwa) {}
+    const string& getNazwa() const { return nazwa; }
+private:
+    string nazwa;
+};
+
+class Budynek {
+public:
+    enum Typ { MIESZKALNY, PUBLICZNY, KOMERCYJNY };
+
+    Budynek(const Miejscowosc& miejscowosc, const string& ulica, int numer, int kodPocztowy, double metraz, Typ typ)
+        : miejscowosc(miejscowosc), ulica(ulica), numer(numer), kodPocztowy(kodPocztowy), metraz(metraz), typ(typ) {
+        if (typ != PUBLICZNY) ++liczbaInnychBudynkow;
+    }
+
+    ~Budynek() {
+        if (typ != PUBLICZNY) --liczbaInnychBudynkow;
+    }
+
+    const string& getUlica() const { return ulica; }
+    void setUlica(const string& ul) { ulica = ul; }
+
+    int getNumer() const { return numer; }
+    void setNumer(int nr) { numer = nr; }
+
+    int getKodPocztowy() const { return kodPocztowy; }
+    void setKodPocztowy(int kod) { kodPocztowy = kod; }
+
+    double getMetraz() const { return metraz; }
+    void setMetraz(double met) { metraz = met; }
+
+    Typ getTyp() const { return typ; }
+    void setTyp(Typ tp) {
+        if (typ != PUBLICZNY && tp == PUBLICZNY) --liczbaInnychBudynkow;
+        if (typ == PUBLICZNY && tp != PUBLICZNY) ++liczbaInnychBudynkow;
+        typ = tp;
+    }
+
+    const Miejscowosc& getMiejscowosc() const { return miejscowosc; }
+
+    virtual double obliczPodatek() const {
+        return metraz * 10;
+    }
+
+    operator double() const {
+        return sqrt(2) * sqrt(metraz);
+    }
+
+    static int getLiczbaInnychBudynkow() { return liczbaInnychBudynkow; }
+
+private:
+    Miejscowosc miejscowosc;
+    string ulica;
+    int numer;
+    int kodPocztowy;
+    double metraz;
+    Typ typ;
+
+    static int liczbaInnychBudynkow;
+};
+
+int Budynek::liczbaInnychBudynkow = 0;
+
+class Posiadlosc : public Budynek {
+public:
+    Posiadlosc(const Miejscowosc& miejscowosc, const string& ulica, int numer, int kodPocztowy, double metraz, Typ typ, double dzialka)
+        : Budynek(miejscowosc, ulica, numer, kodPocztowy, metraz, typ), dzialka(dzialka) {}
+
+    double getDzialka() const { return dzialka; }
+    void setDzialka(double dz) { dzialka = dz; }
+
+    double obliczPodatek() const override {
+        return Budynek::obliczPodatek() + dzialka * 5;
+    }
+
+    Posiadlosc& operator=(const Posiadlosc& other) {
+        if (this != &other) {
+            if (this->getMiejscowosc().getNazwa() == other.getMiejscowosc().getNazwa() &&
+                this->getMetraz() == other.getMetraz() &&
+                this->dzialka == other.dzialka) {
+                throw logic_error("Posiadlosc jest identyczna, ale ma inny typ.");
+            }
+
+            Budynek::operator=(other);
+            dzialka = other.dzialka;
+        }
+        return *this;
+    }
+
+private:
+    double dzialka;
+};
+
+int main() {
+    try {
+        Miejscowosc miejscowosc("Warszawa");
+        Budynek budynek(miejscowosc, "Kwiatowa", 10, 12345, 120.5, Budynek::MIESZKALNY);
+        Posiadlosc posiadlosc(miejscowosc, "Różana", 15, 12346, 200.0, Budynek::KOMERCYJNY, 500.0);
+
+        cout << "Liczba budynków innych niż publiczne: " << Budynek::getLiczbaInnychBudynkow() << endl;
+        cout << "Podatek za budynek: " << budynek.obliczPodatek() << " PLN" << endl;
+        cout << "Podatek za posiadlosc: " << posiadlosc.obliczPodatek() << " PLN" << endl;
+
+        double przekatna = static_cast<double>(budynek);
+        cout << "Przekatna budynku: " << przekatna << endl;
+    }
+    catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+
+    return 0;
+}
